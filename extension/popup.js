@@ -1,8 +1,14 @@
 $(function() {
   $('#addAmount').focus();
+  var goal = 0;
 
   chrome.storage.sync.get('total', function(items) {
     $('#total').text(items.total);
+  });
+
+  chrome.storage.sync.get('goal', function(items) {
+    $('#goal').text(items.goal);
+    goal = parseInt(items.goal);
   });
 
   //$('#addAmount').click(function() {
@@ -22,7 +28,20 @@ $(function() {
       chrome.storage.sync.set({ 'total': newTotal });
       $('#total').text(newTotal);
       // Clear the text field
-      $('#amount').val(''); 
+      $('#amount').val('');
+
+      if (newTotal >= goal) {
+        var options = {
+          type: 'basic',
+          title: 'Congrats!',
+          message: 'You have reached your goal!',
+          iconUrl: 'icon.png'
+        };
+        chrome.notifications.create('congrats', options, function() {
+        });
+      }
+
+
     });
 
     // This will disable the empty action
